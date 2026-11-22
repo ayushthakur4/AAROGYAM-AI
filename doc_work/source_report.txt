@@ -1,0 +1,397 @@
+000 [Normal] A PROJECT REPORT
+001 [Normal] Submitted to the
+002 [Normal] HIMACHAL PRADESH TECHNICAL UNIVERSITY (HPTU)
+HAMIRPUR (H.P.)
+003 [Normal] 
+004 [Normal] IN PARTIAL FULFILMENT OF THE REQUIREMENT FOR THE AWARD OF THE DEGREE OF
+005 [Normal] MASTER OF COMPUTER APPLICATIONS (MCA)
+006 [Normal] (3rd SEMESTER | SESSION 2025-2027)
+007 [Normal] Department of Computer Applications and Engineering
+H.P.T.U. Hamirpur
+008 [Normal] 
+009 [Normal] PROJECT REPORT
+010 [Normal] ON
+011 [Normal] AYURSATHI: AN AYURVEDIC WELLNESS AND REMEDY COMPANION
+012 [Normal] (Android Application and Backend API | Individual MCA Project)
+013 [Normal] SUBMITTED IN PARTIAL FULFILMENT OF THE REQUIREMENT FOR THE AWARD OF THE DEGREE OF
+014 [Normal] MASTER OF COMPUTER APPLICATIONS (MCA)
+015 [Normal] FOR THE SESSION 2025-2027
+016 [Normal] Ayush Thakur (Roll No.: 2514930020)
+017 [Normal] UNDER THE GUIDANCE OF
+Er. Neha Dhiman
+Head of Department (MCA)
+018 [Normal] 
+019 [Normal] MCA DEPARTMENT
+HPTU DARUHI, HAMIRPUR, H.P.
+NOVEMBER 2026
+020 [Normal] 
+021 [Heading 1] HIMACHAL PRADESH TECHNICAL UNIVERSITY (HPTU)
+HAMIRPUR (H.P.)
+022 [Heading 1] CERTIFICATE OF ORIGINALITY
+023 [Normal] This is to certify that the project report entitled "AyurSathi: An Ayurvedic Wellness and Remedy Companion", submitted to the Department of Computer Applications and Engineering, Himachal Pradesh Technical University (HPTU), Hamirpur, in partial fulfilment of the requirements for the degree of Master of Computer Applications (MCA), is a record of project work carried out by Ayush Thakur (Roll No. 2514930020) under the guidance of Er. Neha Dhiman, Head of Department (MCA), during the academic session 2025-2027.
+024 [Normal] The report describes an Android application and its supporting backend API. It does not describe a web application. The final originality and supervision certification is subject to review and signature by the department and project guide.
+025 [Normal] 
+
+Project Guide: Er. Neha Dhiman
+Head of Department (MCA)
+Signature: ___________________________
+
+Date: __________________
+026 [Normal] 
+027 [Heading 1] DECLARATION
+028 [Normal] I, Ayush Thakur (Roll No. 2514930020), student of Master of Computer Applications at Himachal Pradesh Technical University, Hamirpur, declare that this report, entitled "AyurSathi: An Ayurvedic Wellness and Remedy Companion", presents the work completed for my MCA project to the best of my knowledge. The project consists of an Android mobile application developed with React Native and Expo and a Node.js/Express backend API. It does not include a website.
+029 [Normal] I have identified the software frameworks, libraries, and services used in the project. The report distinguishes implemented features from proposed improvements. Any medical or wellness information displayed by the application is informational and is not a substitute for diagnosis or treatment by a qualified healthcare professional.
+030 [Normal] 
+
+___________________________
+Ayush Thakur
+MCA Student
+Roll No.: 2514930020
+Date: November 2026
+031 [Normal] 
+032 [Heading 1] ACKNOWLEDGEMENT
+033 [Normal] I express my sincere gratitude to Er. Neha Dhiman, my Project Guide and Head of Department (MCA), Department of Computer Applications and Engineering, Himachal Pradesh Technical University, Hamirpur, for her academic guidance and support during this project. I am thankful to the department for providing the opportunity to apply software engineering concepts to the design and development of AyurSathi.
+034 [Normal] I also thank my family and peers for their encouragement. I acknowledge the communities and documentation authors behind React Native, Expo, Node.js, Express, MongoDB, Mongoose, and the Google GenAI SDK, whose tools and technical references supported the implementation.
+035 [Normal] 
+036 [Heading 1] ABSTRACT
+037 [Normal] AyurSathi is an Android wellness companion that presents Ayurvedic lifestyle information through a mobile interface backed by a REST API. The application lets users enter a health concern, request a response in a selected language, and view a structured result containing an Ayurvedic analysis, general health tip, home-remedy ingredients and preparation steps, yoga guidance, and advice on when to consult a doctor. It also includes a questionnaire-based Prakriti (dosha) self-assessment, recipe details, yoga instructions, settings for language and theme, and an app-version check.
+038 [Normal] The mobile client is built with React Native and Expo. It communicates over HTTP with a Node.js and Express backend. The backend first checks an in-memory cache, then checks MongoDB for English-language remedy records, and then requests structured JSON from Google Gemini when a valid API key is configured. Generated responses are cached in memory and saved asynchronously to MongoDB. The application is therefore dependent on network connectivity and backend availability for symptom searches; the Prakriti questionnaire is computed locally in the app. This report documents the project requirements, architecture, implementation, data handling, and a verification plan. Test outcomes are not claimed where execution evidence is unavailable.
+039 [Normal] Keywords: Android application, Ayurvedic wellness, React Native, Expo, Express API, MongoDB, Gemini AI, cache.
+040 [Normal] 
+041 [Heading 1] TABLE OF CONTENTS
+042 [Normal] Certificate of Originality
+043 [Normal] Declaration
+044 [Normal] Acknowledgement
+045 [Normal] Abstract
+046 [Normal] List of Figures
+047 [Normal] Chapter 1  Introduction
+048 [Normal] Chapter 2  Project Planning and Requirements
+049 [Normal] Chapter 3  System Analysis and Design
+050 [Normal] Chapter 4  Implementation
+051 [Normal] Chapter 5  Verification and Testing Plan
+052 [Normal] Chapter 6  Security, Privacy, and Limitations
+053 [Normal] Chapter 7  Conclusion and Future Scope
+054 [Normal] Bibliography
+055 [Normal] Glossary
+056 [Normal] Appendix B  Important Code Files and Definitions
+057 [Normal] Appendix A  Android Screenshot Insertion Pages
+058 [Normal] Page numbers can be updated in Microsoft Word after opening this report.
+059 [Normal] 
+060 [Heading 1] LIST OF FIGURES
+061 [Normal] Figure 3.1  DFD Level 0 context diagram
+062 [Normal] Figure 3.2  DFD Level 1 remedy request processing
+063 [Normal] Figure A.1  AyurSathi Android Home Screen
+064 [Normal] Figure A.2  Search Results Screen
+065 [Normal] Figure A.3  Remedy Detail Screen
+066 [Normal] Figure A.4  Video Guide Screen
+067 [Normal] Figure A.5  Android API request code in HomeScreen.jsx
+068 [Normal] Figure A.6  Backend remedy resolution code in remedyRoutes.js
+069 [Normal] 
+070 [Heading 1] CHAPTER 1
+INTRODUCTION
+071 [Heading 2] 1.1 Background
+072 [Normal] Mobile applications have made digital wellness information easier to access. AyurSathi explores how a smartphone interface and a backend service can organize general Ayurvedic wellness content for users who want to learn about common concerns, home-remedy preparation, yoga, and lifestyle suggestions. The project combines an Android client with a server-side API that can retrieve cached results or request structured content from a generative AI service.
+073 [Normal] The application is an educational software project. Ayurvedic suggestions and AI-generated text can be incomplete or unsuitable for an individual. The product includes doctor guidance and a disclaimer, and the report treats generated material as general information rather than clinical advice.
+074 [Heading 2] 1.2 Problem Statement
+075 [Normal] Users may encounter wellness information spread across unrelated sources and in languages they do not readily understand. A mobile application can provide a consistent way to submit a concern and display a structured response. The technical problem is to connect an Android interface to a backend that can request, validate at a basic structural level, cache, persist, and return remedy content while handling connectivity and service failures.
+076 [Heading 2] 1.3 Aim and Objectives
+077 [Normal] The aim is to design and implement an Android wellness companion supported by a backend API. Its objectives are:
+078 [List Bullet] Provide a mobile search flow for a user-entered health concern.
+079 [List Bullet] Return structured remedy, yoga, health-tip, Ayurvedic-analysis, and doctor-advice fields.
+080 [List Bullet] Support language selection in the app and pass the selected language to the backend.
+081 [List Bullet] Reduce repeated generation and database reads with an in-memory cache and MongoDB persistence.
+082 [List Bullet] Provide a local Prakriti questionnaire, recipe and yoga detail screens, and configurable theme and language.
+083 [List Bullet] Present basic app version information and handle network or backend errors clearly.
+084 [Heading 2] 1.4 Scope
+085 [Normal] The scope includes the Expo/React Native Android app, the Node.js/Express REST API, Google Gemini integration, and MongoDB-backed remedy records. The project repository contains no website deliverable; web UI, web hosting, and browser-based product features are excluded. The backend may be deployed as a server service, but the user-facing client documented here is Android.
+086 [Heading 2] 1.5 Organization of the Report
+087 [Normal] Chapter 2 states requirements and project planning. Chapter 3 presents system architecture and data flows. Chapter 4 describes the implemented mobile and backend modules. Chapter 5 defines verification cases without asserting unrecorded results. Chapter 6 discusses privacy, safety, and limitations. Chapter 7 concludes and identifies future work.
+088 [Normal] 
+089 [Heading 1] CHAPTER 2
+PROJECT PLANNING AND REQUIREMENTS
+090 [Heading 2] 2.1 Existing System and Proposed System
+091 [Normal] General wellness content is often consulted from many independent sources, making it difficult to move from a concern to a clear set of steps. AyurSathi proposes one Android workflow that sends a concern to a backend and displays a consistent response structure. The backend can reuse cached data, retrieve an English record from MongoDB, or request a new response from Gemini. This reduces repetition for previously resolved English queries, while generated results remain dependent on external services.
+092 [Heading 2] 2.2 Functional Requirements
+093 [Heading 2] 2.3 Non-Functional Requirements
+094 [Heading 2] 2.4 Feasibility
+095 [List Bullet] Technical: The repository uses established JavaScript frameworks and a REST boundary between mobile client and server. Operation requires valid service configuration and internet access for server-side AI generation.
+096 [List Bullet] Economic: The software stack supports development with open-source tooling; hosting, database, and AI usage may have service-specific quotas or charges.
+097 [List Bullet] Operational: Users interact through an Android application and do not need to operate the backend directly.
+098 [Heading 2] 2.5 Hardware and Software Requirements
+099 [Heading 2] 2.6 Project Schedule
+100 [Normal] The project repository does not provide a verified dated work log. The phases below describe the logical development sequence rather than claiming specific completion dates.
+101 [Normal] 
+102 [Heading 1] CHAPTER 3
+SYSTEM ANALYSIS AND DESIGN
+103 [Heading 2] 3.1 System Architecture
+104 [Normal] AyurSathi uses a client-server architecture. The Android application handles input, navigation, local questionnaire scoring, and presentation. The Express API accepts remedy requests and resolves them through an in-memory cache, MongoDB for English records, and the Gemini generation service. Mongoose maps remedy objects to MongoDB documents. The Android client receives JSON and routes the result to the Results screen.
+105 [Normal] Android App (React Native / Expo)  →  Express REST API  →  In-memory cache / MongoDB / Gemini AI
+106 [Heading 2] 3.2 Data Flow
+107 [List Bullet] The user types a concern or chooses a quick ailment in HomeScreen.
+108 [List Bullet] The client sends GET /api/remedies/{concern}?lang={language} to the configured API URL.
+109 [List Bullet] The route normalizes the concern and language and checks the process-local cache.
+110 [List Bullet] For English only, the backend checks MongoDB for a matching diseaseName.
+111 [List Bullet] If no result is found and GEMINI_API_KEY is valid, the backend requests schema-shaped JSON from Gemini.
+112 [List Bullet] The generated result is returned to the app, stored in the in-memory cache, and saved asynchronously in MongoDB.
+113 [List Bullet] The app displays the result and gives access to remedy and yoga detail screens.
+114 [Heading 2] 3.2.1 Data Flow Diagrams
+115 [Normal] 
+116 [Normal] Figure 3.1: DFD Level 0 context diagram for the Android app and AyurSathi backend API.
+117 [Normal] 
+118 [Normal] Figure 3.2: DFD Level 1 remedy request processing through cache, MongoDB, and Gemini.
+119 [Heading 2] 3.3 Backend API Design
+120 [Normal] The remedy response includes diseaseName, ayurvedicAnalysis, healthTip, homeRemedies, yoga, and doctorAdvice. Each home remedy contains a name, ingredients, and preparation steps. Each yoga item contains a pose name, instructions, duration, image keyword, and YouTube search query. The route returns 502 when AI generation fails and 503 when no valid Gemini API key is configured; unexpected server errors return 500.
+121 [Heading 2] 3.4 Database Design
+122 [Normal] The Remedy Mongoose model stores diseaseName, healthTip, ayurvedicAnalysis, arrays of home remedies, arrays of yoga guidance, and doctorAdvice. Mongoose timestamps are enabled. The schema marks diseaseName as required and lowercase. The backend currently performs a database lookup only for English-language requests. AI-generated responses are saved asynchronously; persistence errors are logged and do not prevent the immediate response.
+123 [Heading 2] 3.5 Mobile Navigation and Screens
+124 [Heading 2] 3.6 Use Case Summary
+125 [Normal] 
+126 [Heading 1] CHAPTER 4
+IMPLEMENTATION
+127 [Heading 2] 4.1 Technology Stack
+128 [Heading 2] 4.2 Android Client Implementation
+129 [Normal] The app root composes ThemeProvider and LanguageProvider around the navigation container. App.jsx controls an animated splash screen and performs a version check against VERSION_API_URL. HomeScreen accepts free-text concerns and quick choices, passes the language as a query parameter, and navigates to Results with the returned object. It uses a request timeout and displays a user-facing alert for network, timeout, and backend errors.
+130 [Normal] ResultsScreen, RecipeScreen, and YogaDetailScreen divide the response into readable sections and detailed views. PrakritiTestScreen contains six multiple-choice questions, increments one of three local scores per answer, and presents the highest-scoring dosha and corresponding lifestyle suggestions. ThemeContext and LanguageContext provide shared settings. No user account or authentication flow is present in the reviewed app structure.
+131 [Heading 2] 4.3 Backend Implementation
+132 [Normal] server.js loads environment configuration, enables CORS and JSON request parsing, connects to MongoDB, exposes health and version routes, and mounts remedyRoutes at /api/remedies. The remedy route normalizes the requested condition and language, checks an object-based in-memory cache, queries MongoDB for English results, then calls the Gemini API if configured. The prompt asks for a structured wellness response and the SDK receives a JSON response schema. The route retries selected rate-limit or overload failures with increasing delays.
+133 [Heading 2] 4.4 Configuration and Deployment
+134 [Normal] The backend configuration is provided through environment variables including PORT, MONGODB_URI, GEMINI_API_KEY, and optional GEMINI_MODEL. The repository includes a Render deployment descriptor. Secrets should be configured in the hosting environment and must not be committed in source control. The mobile API endpoint is controlled by the app configuration module. For local device testing, the configured address must be reachable from the Android device.
+135 [Heading 2] 4.5 Error Handling
+136 [Normal] The client distinguishes request timeout and network errors and displays a message from the API when available. The server returns JSON error messages for AI failures, missing API credentials, and unexpected errors. Database lookup/save failures are caught and logged in relevant paths. Operational validation should confirm that deployment logs do not expose secrets and that unavailable dependencies produce an understandable response.
+137 [Normal] 
+138 [Heading 1] CHAPTER 5
+VERIFICATION AND TESTING PLAN
+139 [Heading 2] 5.1 Verification Approach
+140 [Normal] This report defines functional and integration checks based on the source code. No test execution log or automated test suite was supplied with the project files reviewed for this report. Consequently, the matrix records cases to execute and does not claim pass results. A final submission should replace status values with evidence from an emulator/device and a configured backend.
+141 [Heading 2] 5.2 Test Cases
+142 [Heading 2] 5.3 Acceptance Criteria
+143 [List Bullet] The Android application can reach the configured backend from a device or emulator.
+144 [List Bullet] A successful remedy response contains fields consumed by the result views.
+145 [List Bullet] Loading states end after either success or failure.
+146 [List Bullet] The app handles missing network access and server errors without crashing.
+147 [List Bullet] Prakriti scoring and result navigation work for all answer paths.
+148 [List Bullet] The report and user interface describe wellness suggestions as informational.
+149 [Heading 2] 5.4 Verification Evidence
+150 [Normal] For final academic review, attach dated screenshots of the Android screens and redacted request/response examples from a test environment. Do not include API keys, database credentials, or personal symptom data in evidence. Record device/emulator version, backend environment, test date, and actual result for each test case.
+151 [Normal] 
+152 [Heading 1] CHAPTER 6
+SECURITY, PRIVACY, AND LIMITATIONS
+153 [Heading 2] 6.1 Credential Handling
+154 [Normal] The backend relies on environment variables for its database URI and Gemini API key. These values are sensitive and should be stored as deployment secrets. The repository contains an environment example file; the actual local environment file should remain excluded from source control. Production credentials must be rotated if disclosed.
+155 [Heading 2] 6.2 Data Handling
+156 [Normal] The remedy route sends the concern to Gemini as prompt input. The code sets store:false on the Gemini interaction request, indicating that interaction history is not requested to be retained by that call. The backend may persist generated remedy content in MongoDB; this implementation should not be described as storing no data. The reviewed app does not include user authentication or a personal health history feature. Logs and hosting/database access controls still require operational review.
+157 [Heading 2] 6.3 Wellness Safety
+158 [Normal] AyurSathi generates general wellness material and is not a diagnostic system. An AI-generated remedy may be inaccurate, inappropriate, or unsafe for a user’s conditions, allergies, pregnancy status, or medications. The app includes doctor advice and a disclaimer, but such text cannot guarantee clinical safety. Users should consult qualified health professionals, particularly for severe, persistent, or urgent symptoms. A production release should use expert review and stronger safeguards.
+159 [Heading 2] 6.4 Current Limitations
+160 [List Bullet] Symptom search requires network access and a reachable backend; there is no documented offline generation path.
+161 [List Bullet] The process-local cache is not persistent across server restarts and may not be shared across multiple server instances.
+162 [List Bullet] MongoDB retrieval is currently applied only to English-language requests.
+163 [List Bullet] AI output quality, availability, latency, and quotas depend on the configured Gemini service.
+164 [List Bullet] The local Prakriti questionnaire is a simple score tally and should not be represented as a clinical assessment.
+165 [List Bullet] The reviewed repository does not include test evidence sufficient to claim the cases in Chapter 5 passed.
+166 [List Bullet] The project scope is the Android app and API; a web product is not included.
+167 [Normal] 
+168 [Heading 1] CHAPTER 7
+CONCLUSION AND FUTURE SCOPE
+169 [Heading 2] 7.1 Conclusion
+170 [Normal] AyurSathi demonstrates an Android-to-backend workflow for presenting structured Ayurvedic wellness information. Its React Native/Expo client includes concern search, result and detail screens, a local Prakriti questionnaire, language and theme contexts, and a version check. Its Express backend resolves requests through a memory cache, MongoDB lookup for English results, and Gemini generation when configured. The report has documented these components and their boundaries without claiming unverified test outcomes or clinical effectiveness.
+171 [Heading 2] 7.2 Future Scope
+172 [List Bullet] Add automated unit and integration tests for API routes, cache behavior, schema validation, and app navigation.
+173 [List Bullet] Validate and sanitize concern inputs, add request throttling, and define explicit API response validation.
+174 [List Bullet] Consider TTL and size limits for in-memory cache and support consistent database retrieval across languages.
+175 [List Bullet] Add structured consent, data retention controls, and documented privacy practices for production use.
+176 [List Bullet] Conduct review of generated health content by qualified Ayurvedic and medical professionals.
+177 [List Bullet] Improve accessibility, localization quality, and offline access to carefully curated static information.
+178 [List Bullet] Add monitoring, deployment health checks, and controlled version metadata management.
+179 [Normal] 
+180 [Heading 1] BIBLIOGRAPHY
+181 [List Bullet] React Native documentation, https://reactnative.dev/docs/
+182 [List Bullet] Expo documentation, https://docs.expo.dev/
+183 [List Bullet] React Navigation documentation, https://reactnavigation.org/docs/getting-started/
+184 [List Bullet] Node.js documentation, https://nodejs.org/docs/
+185 [List Bullet] Express documentation, https://expressjs.com/
+186 [List Bullet] Mongoose documentation, https://mongoosejs.com/docs/
+187 [List Bullet] MongoDB manual, https://www.mongodb.com/docs/manual/
+188 [List Bullet] Google GenAI SDK documentation and API reference, https://ai.google.dev/gemini-api/docs/
+189 [List Bullet] AyurSathi project source files and README maintained in the supplied project folder.
+190 [Normal] 
+191 [Heading 1] GLOSSARY
+192 [Normal] 
+193 [Heading 1] APPENDIX A
+ANDROID SCREENSHOT INSERTION PAGES
+194 [Normal] Insert genuine screenshots captured from the running Android application in the spaces below. Keep the app content readable and remove personal notifications or identifying information before adding an image.
+195 [Heading 2] A.1 Main Application Screens
+196 [Normal] Figure A.1: Android Home Screen.
+197 [Normal] Figure A.2: Search Results Screen.
+198 [Normal] 
+199 [Heading 1] APPENDIX A
+ANDROID SCREENSHOT INSERTION PAGES CONTINUED
+200 [Heading 2] A.1 Main Application Screens continued
+201 [Normal] Figure A.3: Remedy Detail Screen.
+202 [Normal] Figure A.4: Video Guide Screen.
+203 [Normal] 
+204 [Heading 1] APPENDIX A
+IMPORTANT CODE SCREENSHOTS
+205 [Normal] Insert clear editor screenshots of the indicated source sections. Crop the editor to the relevant code and keep environment files, API keys, and database credentials out of view.
+206 [Heading 2] A.2 Android and Backend Code
+207 [Normal] Figure A.5: Android request flow in HomeScreen.jsx.
+208 [Normal] Figure A.6: Backend remedy resolution in remedyRoutes.js.
+209 [Heading 1] APPENDIX B
+IMPORTANT CODE FILES AND DEFINITIONS
+210 [Normal] This appendix identifies the principal source files and includes short excerpts that explain the main client-to-server workflow. The excerpts are selected from the supplied project source; the complete implementation remains in the AyurSaathi-App and AyurSaathi-Backend folders. No API keys or database credentials are reproduced.
+211 [Heading 2] B.1 Important Source File Map
+212 [Heading 2] B.2 Android Search and API Request
+213 [Normal] The Home screen uses the query and selected language to request a remedy. The following excerpt shows the key request and result navigation pattern.
+214 [Heading 2] B.3 Backend Resolution Order
+215 [Normal] The backend first checks its process-local cache and then checks MongoDB for English responses. If neither provides a result, it can generate a response through Gemini when configured.
+216 [Normal] Excerpt note: the full route includes database error handling, API-key checks, asynchronous persistence, and 502/503/500 responses. Those surrounding branches are omitted here to keep the listing focused.
+217 [Heading 2] B.4 Remedy Data Model
+218 [Normal] The Mongoose model describes the fields shared by the backend and mobile results screens.
+219 [Heading 2] B.5 App Navigation and Providers
+220 [Normal] The root component provides shared language and theme state to the navigation stack. The screens listed here correspond to the Android app; there is no website interface.
+221 [Heading 2] B.6 Frontend API Configuration
+222 [Normal] Source file: AyurSaathi-App/config.js. This complete file selects the production or local backend URL and exposes the version-check URL. The private local network address is replaced by YOUR_LOCAL_IP.
+223 [Heading 2] B.7 Backend Server Entry Point
+224 [Normal] Source file: AyurSaathi-Backend/server.js. The full server entry point is reproduced below. It reads credentials from environment variables; no credential values are included in this report.
+225 [Heading 2] B.8 Backend Remedy Route
+226 [Normal] Source file: AyurSaathi-Backend/routes/remedyRoutes.js. The full route module is reproduced below, including its response schema, Gemini generation, retries, cache and database resolution, persistence, and error responses.
+227 [Heading 2] B.9 Definitions of Important Code Terms
+TABLES
+TABLE 0
+Project Guide / Submitted To: / Er. Neha Dhiman / Head of Department (MCA) | Submitted By: / Ayush Thakur / Roll No.: 2514930020 / MCA 3rd Semester
+TABLE 1
+ID | Requirement
+FR-01 | Allow the user to enter a concern or select a quick ailment and request results.
+FR-02 | Send the selected language with the remedy request and display returned structured content.
+FR-03 | Show analysis, health tip, remedies, ingredients, preparation steps, yoga instructions, and doctor advice.
+FR-04 | Provide a six-question Prakriti questionnaire and show the dominant dosha result.
+FR-05 | Allow navigation to recipe and yoga detail views.
+FR-06 | Provide settings for theme and language.
+FR-07 | Expose backend health and app-version endpoints.
+FR-08 | Report network, timeout, backend, missing-key, and AI-generation errors to the client.
+TABLE 2
+Area | Requirement
+Usability | Mobile-first screens, clear navigation, readable result sections, and loading/error feedback.
+Performance | Reuse in-memory and persisted English results where available; requests have a client timeout.
+Reliability | Return JSON responses and error codes when AI generation or configuration is unavailable.
+Maintainability | Separate screens, contexts, routes, and the Mongoose model into project modules.
+Privacy | Avoid storing symptom prompts in Gemini interaction history (store:false); database persistence stores generated remedy output.
+Portability | Use React Native/Expo for the mobile client and Node.js for the backend runtime.
+TABLE 3
+Type | Requirement
+Development | Computer with Node.js/npm; Android device or emulator; Expo development tooling.
+Mobile runtime | Android device with a compatible app build and network connection.
+Backend | Node.js runtime, Express dependencies, environment configuration, and reachable MongoDB.
+AI service | A configured Google Gemini API key for generation when a cache/database result is unavailable.
+Database | MongoDB instance with connection URI configured as MONGODB_URI.
+TABLE 4
+Phase | Work
+1 | Requirement review and scope definition
+2 | Android screen and navigation development
+3 | REST API and remedy data model implementation
+4 | AI integration, caching, and database connection
+5 | Client-server integration and error handling
+6 | Documentation and planned verification
+TABLE 5
+Method and path | Purpose | Result
+GET / | Health check | JSON status and API-running message
+GET /api/version | Mobile app update metadata | Latest/minimum version, notes, URL, mandatory flag
+GET /api/remedies/:disease?lang=en | Get or generate a wellness result | Structured remedy JSON or JSON error
+TABLE 6
+Screen | Responsibility
+HomeScreen | Concern input, quick ailments, wellness content, navigation to settings and Prakriti test.
+ResultsScreen | Display the selected remedy response, advice, yoga, and remedy summaries.
+RecipeScreen | Show ingredients and preparation steps for a selected remedy.
+YogaDetailScreen | Show a pose, duration, instructions, and a link/search action for tutorial content.
+PrakritiTestScreen | Collect six local answers, score Vata/Pitta/Kapha, and show tips.
+SettingsScreen | Manage available language and appearance preferences.
+TABLE 7
+Actor | Use case | System response
+App user | Search a concern | Request API result and display structured guidance.
+App user | Complete Prakriti test | Calculate dominant dosha locally and show associated tips.
+App user | Open a remedy or yoga item | Display detailed steps or pose guidance.
+Backend operator | Configure runtime | Set database URI, port, Gemini key, and optional model.
+TABLE 8
+Component | Technology | Role
+Android client | React Native 0.76.9, Expo SDK 52 | Cross-platform mobile UI and Android packaging.
+Navigation | React Navigation 7 | Native stack navigation among app screens.
+Client networking | Axios | HTTP requests to remedy API.
+Backend | Node.js and Express | REST endpoints and request handling.
+AI generation | Google GenAI SDK and Gemini model configuration | Structured response generation when needed.
+Persistence | MongoDB and Mongoose | Store and retrieve remedy documents.
+Configuration | dotenv | Load server environment variables.
+TABLE 9
+ID | Test case | Expected result | Status
+TC-01 | Open app and navigate through splash to Home | Home screen appears and navigation is responsive. | Not executed
+TC-02 | Submit a valid concern with English selected | Client sends request and renders returned result. | Not executed
+TC-03 | Submit with a supported non-English language | Language code is included and returned text is presented. | Not executed
+TC-04 | Submit while API is unreachable | Clear network error is shown; loading state ends. | Not executed
+TC-05 | Call remedy endpoint with no Gemini key and no cache hit | API returns a JSON configuration error (503). | Not executed
+TC-06 | Repeat a prior concern during same backend process | In-memory cache may return the earlier response. | Not executed
+TC-07 | Fetch English result present in MongoDB | Database result is returned without generation. | Not executed
+TC-08 | Complete all six Prakriti questions | Dominant dosha and its tips are shown. | Not executed
+TC-09 | Open recipe and yoga detail items | Selected item details are displayed. | Not executed
+TC-10 | Call /api/version | Version metadata is returned as JSON. | Not executed
+TABLE 10
+Term | Meaning
+API | Application Programming Interface; a defined way for software components to communicate.
+Android | Mobile operating system targeted by the AyurSathi client.
+Cache | Temporary storage used to reuse previously obtained data.
+Dosha | Ayurvedic concept represented in the app by Vata, Pitta, and Kapha categories.
+Expo | Development and build platform used with React Native.
+Gemini | Google generative AI service used by the backend to produce structured content.
+JSON | Text-based data interchange format used for API requests and responses.
+MongoDB | Document-oriented database used to persist remedy records.
+Prakriti | Ayurvedic constitution concept used for the app’s questionnaire result.
+REST | Resource-oriented style for HTTP APIs.
+React Native | JavaScript framework for building native mobile interfaces.
+Mongoose | Object data modeling library used to interact with MongoDB from Node.js.
+TABLE 11
+SCREENSHOT PLACEHOLDER / Figure A.1  AyurSathi Android Home Screen with symptom search and quick ailments
+TABLE 12
+SCREENSHOT PLACEHOLDER / Figure A.2  Search Results Screen showing the returned wellness response
+TABLE 13
+SCREENSHOT PLACEHOLDER / Figure A.3  Remedy Detail Screen with remedy name, ingredients, and preparation steps
+TABLE 14
+SCREENSHOT PLACEHOLDER / Figure A.4  Video Guide Screen with yoga pose instructions and video guide link
+TABLE 15
+SCREENSHOT PLACEHOLDER / Figure A.5  Android API request and error handling in AyurSaathi-App/screens/HomeScreen.jsx
+TABLE 16
+SCREENSHOT PLACEHOLDER / Figure A.6  Cache, database, and AI response flow in AyurSaathi-Backend/routes/remedyRoutes.js
+TABLE 17
+File | Definition and responsibility
+AyurSaathi-App/App.jsx | Application entry point. Wraps the screen navigator in theme and language providers and registers the app screens.
+AyurSaathi-App/screens/HomeScreen.jsx | Android home screen. Accepts a concern, calls the backend and navigates to the result view.
+AyurSaathi-App/screens/ResultsScreen.jsx | Normalizes and presents the API response in Overview, Remedies and Yoga views.
+AyurSaathi-App/screens/PrakritiTestScreen.jsx | Runs a six-question, on-device dosha questionnaire and shows the highest-scoring category.
+AyurSaathi-App/config.js | Selects the API base URL used for remedy requests and app-version checks.
+AyurSaathi-App/context/LanguageContext.js | Stores the selected language and exposes language metadata and UI strings to screens.
+AyurSaathi-Backend/server.js | Creates the Express server, connects MongoDB, exposes health/version routes and mounts remedy routes.
+AyurSaathi-Backend/routes/remedyRoutes.js | Implements remedy lookup, caching, Gemini generation, and JSON error responses.
+AyurSaathi-Backend/models/Remedy.js | Defines the Mongoose document structure for stored remedy responses.
+TABLE 18
+  const search = useCallback(async (q) => { /     const val = q || query; /     if (!val.trim()) return; /     Keyboard.dismiss(); /     await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); /     setLoading(true); /     try { /       const res = await axios.get(`${API_URL}/${encodeURIComponent(val)}`, { params: { lang: language }, timeout: 45000 }); /       navigation.navigate('Results', { remedy: res.data }); /     } catch (err) { /       let msg = 'Something went wrong. Please try again.'; /       if (err.code === 'ECONNABORTED') msg = 'Server is taking too long. Try again.'; /       else if (err.message?.includes('Network Error')) msg = 'Cannot reach server. Check your connection.'; /       else if (err.response?.data?.error) msg = err.response.data.error; /       Alert.alert('Oops', msg); /     } finally { /       setLoading(false); /     } /   }, [query, navigation]);
+TABLE 19
+const cacheKey = `${disease}_${lang}`; /   / if (remediesCache[cacheKey]) { /   return res.json(remediesCache[cacheKey]); / } /   / if (lang === 'en') { /   const remedy = await Remedy.findOne({ diseaseName: disease }); /   if (remedy) { /     remediesCache[cacheKey] = remedy; /     return res.json(remedy); /   } / } /   / const aiResponse = await generateAIResponse(disease, lang); / aiResponse.diseaseName = disease; / remediesCache[cacheKey] = aiResponse; / return res.json(aiResponse);
+TABLE 20
+const remedySchema = new mongoose.Schema({ /   diseaseName: { type: String, required: true, lowercase: true }, /   healthTip: String, /   ayurvedicAnalysis: String, /   homeRemedies: [{ /     remedyName: String, /     ingredients: [String], /     preparationSteps: [String] /   }], /   yoga: [{ /     asanaName: String, /     howToDo: [String], /     duration: String, /     imageKeyword: String, /     youtubeSearchQuery: String /   }], /   doctorAdvice: String / }, { timestamps: true });
+TABLE 21
+import { Platform } from 'react-native'; /   / // backend url for production / const PRODUCTION_URL = 'https://ayursathi.onrender.com/api/remedies'; /   / // set to true for local testing / const USE_LOCAL = false; / const LOCAL_IP = 'YOUR_LOCAL_IP'; /   / const getApiUrl = () => { /     if (USE_LOCAL && __DEV__) { /         // use local backend /         return `http://${LOCAL_IP}:5000/api/remedies`; /     } /     // use cloud backend /     return PRODUCTION_URL; / }; /   / export const API_URL = getApiUrl(); /   / // api to check app version / const getVersionUrl = () => { /     if (USE_LOCAL && __DEV__) { /         return `http://${LOCAL_IP}:5000/api/version`; /     } /     return 'https://ayursathi.onrender.com/api/version'; / }; / export const VERSION_API_URL = getVersionUrl();
+TABLE 22
+require("dotenv").config(); /   / // fix dns issues for mongodb atlas / const dns = require("dns"); / dns.setServers(["8.8.8.8", "8.8.4.4", "1.1.1.1"]); /   / const express = require("express"); / const cors = require("cors"); / const remedyRoutes = require("./routes/remedyRoutes"); /   / const app = express(); /   / app.use(cors()); / app.use(express.json()); /   / // connect to mongo / const mongoose = require("mongoose"); / const mongoURI = process.env.MONGODB_URI; /   / if (!mongoURI) { /   console.error("missing mongodb uri in env"); /   if (process.env.NODE_ENV === "production") { /     process.exit(1); /   } / } /   / console.log("connecting to mongodb..."); /   / mongoose /   .connect(mongoURI, { /     serverSelectionTimeoutMS: 30000, /     connectTimeoutMS: 45000, /     socketTimeoutMS: 60000, /   }) /   .then(() => console.log("connected to mongodb")) /   .catch((err) => { /     console.error("failed to connect to mongo:", err.message); /   }); /   / mongoose.connection.on("disconnected", () => /   console.log("mongodb disconnected"), / ); / mongoose.connection.on("reconnected", () => /   console.log("mongodb reconnected"), / ); /   / // simple health check / app.get("/", (req, res) => { /   res.json({ status: "ok", message: "api is running" }); / }); /   / // check app version / app.get("/api/version", (req, res) => { /   res.json({ /     latestVersion: "1.1.0", /     latestVersion: "1.2.0", /     minVersion: "1.0.0", /     releaseNotes: [ /       "🌿 Know Your Bio-Energy: New Prakriti (Dosha) Analysis feature!", /       "✨ Brand new Apple-inspired UI", /       "🤖 Faster AI-powered search", /       "🧘 Improved yoga detail screens", /       "🐛 Bug fixes and performance improvements", /     ], /     updateUrl: "https://expo.dev/@ayushthakur4/ayursaathi-app", /     mandatory: false, /   }); / }); /   / app.use("/api/remedies", remedyRoutes); /   / const PORT = process.env.PORT || 5000; / app.listen(PORT, "0.0.0.0", () => /   console.log(`server started on port ${PORT}`), / );
+TABLE 23
+const express = require("express"); / const router = express.Router(); / const Remedy = require("../models/Remedy"); / const { GoogleGenAI } = require("@google/genai"); /   / const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }); / // Gemini 2.5 Flash access is restricted for projects without prior usage. / // Allow Render to override the default without changing the source. / const GEMINI_MODEL = process.env.GEMINI_MODEL || "gemini-3.8-flash"; /   / const remediesCache = {}; /   / // wait for retry / const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); /   / // valid languages / const LANG_NAMES = { /   en: 'English', hi: 'Hindi', bn: 'Bengali', te: 'Telugu', ta: 'Tamil', /   mr: 'Marathi', gu: 'Gujarati', kn: 'Kannada', ml: 'Malayalam', /   pa: 'Punjabi', or: 'Odia', ur: 'Urdu', as: 'Assamese', sa: 'Sanskrit', / }; /   / const generateAIResponse = async (disease, lang = 'en', retries = 3) => { /   const langName = LANG_NAMES[lang] || 'English'; /   console.log(`asking gemini in ${langName}`); /   /   const langInstruction = lang !== 'en' /     ? `IMPORTANT: Write ALL text values in ${langName} script/language. Only keep JSON keys, imageKeyword, and youtubeSearchQuery in English.` /     : ''; /   /   const prompt = `Act as an Ayurvedic expert. Provide a JSON response for condition: "${disease}". / ${langInstruction} / Schema: / { /   "diseaseName": "${disease}", /   "ayurvedicAnalysis": "Dosha imbalance explanation (2 sentences)", /   "healthTip": "Actionable tip", /   "homeRemedies": [{"remedyName": "", "ingredients": [], "preparationSteps": []}], /   "yoga": [{"asanaName": "", "howToDo": [], "duration": "", "imageKeyword": "2-3 word English visual keyword", "youtubeSearchQuery": "search query"}], /   "doctorAdvice": "When to see a doctor" / } / Keep it concise and authentic.`; /   /   const responseSchema = { /     type: "object", /     properties: { /       diseaseName: { type: "string" }, /       ayurvedicAnalysis: { type: "string" }, /       healthTip: { type: "string" }, /       homeRemedies: { /         type: "array", /         items: { /           type: "object", /           properties: { /             remedyName: { type: "string" }, /             ingredients: { type: "array", items: { type: "string" } }, /             preparationSteps: { type: "array", items: { type: "string" } }, /           }, /           required: ["remedyName", "ingredients", "preparationSteps"], /         }, /       }, /       yoga: { /         type: "array", /         items: { /           type: "object", /           properties: { /             asanaName: { type: "string" }, /             howToDo: { type: "array", items: { type: "string" } }, /             duration: { type: "string" }, /             imageKeyword: { type: "string" }, /             youtubeSearchQuery: { type: "string" }, /           }, /           required: ["asanaName", "howToDo", "duration", "imageKeyword", "youtubeSearchQuery"], /         }, /       }, /       doctorAdvice: { type: "string" }, /     }, /     required: ["diseaseName", "ayurvedicAnalysis", "healthTip", "homeRemedies", "yoga", "doctorAdvice"], /   }; /   /   for (let attempt = 0; attempt <= retries; attempt++) { /     try { /       const result = await genAI.interactions.create({ /         model: GEMINI_MODEL, /         input: prompt, /         response_format: { /           type: "text", /           mime_type: "application/json", /           schema: responseSchema, /         }, /         // Symptom descriptions can be sensitive. The remedy API is stateless, /         // so don't retain them in Gemini interaction history. /         store: false, /       }); /       let text = result.output_text; /   /       // Clean up markdown formatting if present /       text = text /         .replace(/```json/g, "") /         .replace(/```/g, "") /         .trim(); /   /       const parsed = JSON.parse(text); /   /       // Validate the response has the required fields /       if ( /         !parsed.healthTip || /         !parsed.homeRemedies || /         !parsed.yoga || /         !parsed.doctorAdvice || /         !parsed.ayurvedicAnalysis /       ) { /         throw new Error("Incomplete AI response - missing required fields"); /       } /   /       console.log("got response from ai"); /       return parsed; /     } catch (err) { /       console.error(`gemini failed attempt ${attempt + 1}:`, err.message); /   /       // Log safety ratings or other details if available /       if (err.response && err.response.promptFeedback) { /         console.error("Safety Ratings:", JSON.stringify(err.response.promptFeedback, null, 2)); /       } /   /       if ( /         attempt < retries && /         (err.message.includes("429") || /           err.message.includes("retry") || /           err.message.includes("RESOURCE_EXHAUSTED") || /           err.message.includes("overloaded")) /       ) { /         const waitTime = (attempt + 1) * 10000; // 10s, 20s, 30s /         console.log("rate limit hit, waiting..."); /         await delay(waitTime); /       } else { /         throw err; /       } /     } /   } / }; /   / router.get("/:disease", async (req, res) => { /   try { /     const disease = req.params.disease.toLowerCase().trim(); /     const lang = (req.query.lang || 'en').toLowerCase().trim(); /     console.log(`searching for ${disease} in ${lang}`); /     const cacheKey = `${disease}_${lang}`; /   /     // check cache /     if (remediesCache[cacheKey]) { /       console.log("found in cache"); /       return res.json(remediesCache[cacheKey]); /     } /   /     // check database for english only /     if (lang === 'en') { /       try { /         let remedy = await Remedy.findOne({ diseaseName: disease }); /         if (remedy) { /           console.log("found in db"); /           remediesCache[cacheKey] = remedy; /           return res.json(remedy); /         } /       } catch (dbError) { /         console.warn("db read error:", dbError.message); /       } /     } /   /     // try ai generation /     if ( /       process.env.GEMINI_API_KEY && /       process.env.GEMINI_API_KEY !== "your_gemini_api_key_here" /     ) { /       try { /         console.log(`querying ai for ${disease}`); /         const aiResponse = await generateAIResponse(disease, lang); /         aiResponse.diseaseName = disease; /   /         // save to db for later /         (async () => { /           try { /             const newRemedy = new Remedy(aiResponse); /             await newRemedy.save(); /             console.log("saved to db"); /           } catch (saveErr) { /             console.error( /               "db save failed:", /               saveErr.message, /             ); /           } /         })(); /   /         // Cache it /         remediesCache[cacheKey] = aiResponse; /   /         return res.json(aiResponse); /       } catch (aiError) { /         console.error("Gemini AI failed:", aiError.message); /         return res.status(502).json({ error: "Gemini could not generate a result. Please try again shortly." }); /       } /     } else { /       console.error("No valid GEMINI_API_KEY configured"); /       return res.status(503).json({ error: "Gemini API key is not configured on the server." }); /     } /   } catch (error) { /     console.error("server error:", error.message); /     res.status(500).json({ error: "Something went wrong. Please try again." }); /   } / }); /   / module.exports = router;
+TABLE 24
+Term | Definition in this project
+Component | A reusable React Native UI unit. Screens such as HomeScreen and ResultsScreen are components.
+Hook | A React function such as useState or useEffect that adds state or lifecycle behavior to a component.
+Navigation stack | The registered set of screens through which the Android user moves.
+Context provider | A React mechanism that makes shared values, such as theme or language, available to child screens.
+REST API | The HTTP interface through which the app asks the backend for data.
+Route | A backend handler connected to an HTTP method and URL, such as GET /api/remedies/:disease.
+Schema | A definition of expected data fields and types; Remedy uses a Mongoose schema.
+Cache | Temporary in-memory storage that can return a previously generated result quickly.
+Model | A Mongoose object used to read and write documents that follow the Remedy schema.
+JSON | The structured text format used to send remedy data between backend and app.
+Environment variable | A runtime configuration value, such as GEMINI_API_KEY, kept outside source code.
+Callback | A function passed to another function or hook; useCallback can preserve a function reference between renders.

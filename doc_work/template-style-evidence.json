@@ -1,0 +1,171 @@
+{
+  "input": "C:\\Users\\thaku\\OneDrive\\Desktop\\AyurSathi_MCA_Project_Report.docx",
+  "fonts_by_char_count": {
+    "Times New Roman": 28637,
+    "Consolas": 11405
+  },
+  "direct_run_formatting_runs": 1157,
+  "direct_paragraph_formatting_paragraphs": 280,
+  "heading_like_paragraphs_not_heading_style": [
+    {
+      "para_index": 1,
+      "text": "A PROJECT REPORT",
+      "style": "Normal"
+    },
+    {
+      "para_index": 3,
+      "text": "HIMACHAL PRADESH TECHNICAL UNIVERSITY (HPTU)\nHAMIRPUR (H.P.)",
+      "style": "Normal"
+    },
+    {
+      "para_index": 5,
+      "text": "IN PARTIAL FULFILMENT OF THE REQUIREMENT FOR THE AWARD OF THE DEGREE OF",
+      "style": "Normal"
+    },
+    {
+      "para_index": 6,
+      "text": "MASTER OF COMPUTER APPLICATIONS (MCA)",
+      "style": "Normal"
+    },
+    {
+      "para_index": 7,
+      "text": "(3rd SEMESTER | SESSION 2025-2027)",
+      "style": "Normal"
+    },
+    {
+      "para_index": 8,
+      "text": "Department of Computer Applications and Engineering\nH.P.T.U. Hamirpur",
+      "style": "Normal"
+    },
+    {
+      "para_index": 10,
+      "text": "PROJECT REPORT",
+      "style": "Normal"
+    },
+    {
+      "para_index": 11,
+      "text": "ON",
+      "style": "Normal"
+    },
+    {
+      "para_index": 12,
+      "text": "AYURSATHI: AN AYURVEDIC WELLNESS AND REMEDY COMPANION",
+      "style": "Normal"
+    },
+    {
+      "para_index": 13,
+      "text": "(Android Application and Backend API | Individual MCA Project)",
+      "style": "Normal"
+    },
+    {
+      "para_index": 15,
+      "text": "MASTER OF COMPUTER APPLICATIONS (MCA)",
+      "style": "Normal"
+    },
+    {
+      "para_index": 16,
+      "text": "FOR THE SESSION 2025-2027",
+      "style": "Normal"
+    },
+    {
+      "para_index": 20,
+      "text": "MCA DEPARTMENT\nHPTU DARUHI, HAMIRPUR, H.P.\nNOVEMBER 2026",
+      "style": "Normal"
+    },
+    {
+      "para_index": 231,
+      "text": "ID",
+      "style": "Normal"
+    },
+    {
+      "para_index": 232,
+      "text": "Requirement",
+      "style": "Normal"
+    },
+    {
+      "para_index": 249,
+      "text": "Area",
+      "style": "Normal"
+    },
+    {
+      "para_index": 250,
+      "text": "Requirement",
+      "style": "Normal"
+    },
+    {
+      "para_index": 263,
+      "text": "Type",
+      "style": "Normal"
+    },
+    {
+      "para_index": 264,
+      "text": "Requirement",
+      "style": "Normal"
+    },
+    {
+      "para_index": 275,
+      "text": "Phase",
+      "style": "Normal"
+    }
+  ],
+  "examples": {
+    "direct_paragraph_formatting": [
+      {
+        "para_index": 1,
+        "text": "A PROJECT REPORT",
+        "style": "Normal"
+      },
+      {
+        "para_index": 2,
+        "text": "Submitted to the",
+        "style": "Normal"
+      },
+      {
+        "para_index": 3,
+        "text": "HIMACHAL PRADESH TECHNICAL UNIVERSITY (HPTU)\nHAMIRPUR (H.P.)",
+        "style": "Normal"
+      },
+      {
+        "para_index": 4,
+        "text": "",
+        "style": "Normal"
+      },
+      {
+        "para_index": 5,
+        "text": "IN PARTIAL FULFILMENT OF THE REQUIREMENT FOR THE AWARD OF THE DEGREE OF",
+        "style": "Normal"
+      }
+    ],
+    "direct_run_formatting": [
+      {
+        "para_index": 1,
+        "run_text": "A PROJECT REPORT",
+        "style": "Normal"
+      },
+      {
+        "para_index": 2,
+        "run_text": "Submitted to the",
+        "style": "Normal"
+      },
+      {
+        "para_index": 3,
+        "run_text": "HIMACHAL PRADESH TECHNICAL UNIVERSITY (HPTU)\nHAMIRPUR (H.P.)",
+        "style": "Normal"
+      },
+      {
+        "para_index": 5,
+        "run_text": "IN PARTIAL FULFILMENT OF THE REQUIREMENT FOR THE AWARD OF THE DEGREE OF",
+        "style": "Normal"
+      },
+      {
+        "para_index": 6,
+        "run_text": "MASTER OF COMPUTER APPLICATIONS (MCA)",
+        "style": "Normal"
+      }
+    ]
+  },
+  "notes": [
+    "Direct formatting is not always wrong, but it often causes inconsistent output when templates change.",
+    "Heading-like paragraphs not using Heading styles can break TOC and accessibility."
+  ]
+}

@@ -1,0 +1,11 @@
+import { createRequire } from 'node:module';
+import { mkdir } from 'node:fs/promises';
+const require=createRequire(import.meta.url); require('module').Module._initPaths(); const {chromium}=require('playwright');
+const out='C:/Users/thaku/OneDrive/Desktop/AAROGYAM AI/doc_work/figures'; await mkdir(out,{recursive:true});
+const browser=await chromium.launch({headless:true,channel:'msedge'}); const page=await browser.newPage({viewport:{width:1440,height:900},deviceScaleFactor:1});
+await page.goto('http://localhost:5173/',{waitUntil:'networkidle'}); await page.evaluate(()=>window.scrollTo(0,0)); await page.screenshot({path:`${out}/app-home.png`});
+await page.getByRole('searchbox',{name:'What are you feeling today?'}).fill('gentle relaxation routine'); await page.getByRole('button',{name:'Explore wellness guidance'}).click();
+await page.locator('#results-title').waitFor({state:'visible',timeout:75000}); await page.evaluate(()=>window.scrollTo(0,0)); await page.screenshot({path:`${out}/app-results.png`});
+const videoSection=page.locator('.video-section'); if(await videoSection.count()) await videoSection.screenshot({path:`${out}/app-youtube-search-cards.png`});
+await page.goto('http://localhost:5173/login',{waitUntil:'networkidle'}); await page.evaluate(()=>window.scrollTo(0,0)); await page.screenshot({path:`${out}/app-login.png`});
+console.log(JSON.stringify({title:await page.title(),screenshots:['app-home.png','app-results.png','app-youtube-search-cards.png','app-login.png']})); await browser.close();
