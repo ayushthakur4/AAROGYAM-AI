@@ -80,8 +80,6 @@ export default function HeroSection({ onSearch, isSearching = false, searchError
           {/* Pulsing Eyebrow Badge */}
           <div className="hero-badge">
             <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#f59e0b] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#d97706]"></span>
             </span>
             <span>ANCIENT WISDOM · INTELLIGENT WELLNESS</span>
           </div>
@@ -99,9 +97,8 @@ export default function HeroSection({ onSearch, isSearching = false, searchError
           <div className="hero-search-wrapper">
             <div className="hero-search-glow" aria-hidden="true" />
             <form
-              className={`hero-search-capsule hero-search-capsule--center ${
-                searchFocused ? 'hero-search-capsule--focused' : ''
-              }`}
+              className={`hero-search-capsule hero-search-capsule--center ${searchFocused ? 'hero-search-capsule--focused' : ''
+                }`}
               onSubmit={submitSearch}
               onClick={() => document.getElementById('wellness-search')?.focus()}
               role="search"
