@@ -1,17 +1,60 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ivory: #fbf6ee;
-  --color-forest: #1e392a;
-  --color-forest-dark: #15291e;
-  --color-saffron: #f59e0b;
+  --color-canvas-parchment: #fbf6ee;
+  --color-surface-linen: #f7efe2;
+  --color-surface-white: #ffffff;
+  --color-surface: #fff8f5;
+  --color-surface-dim: #edd6c7;
+  --color-surface-bright: #fff8f5;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #fff1e9;
+  --color-surface-container: #ffeadd;
+  --color-surface-container-high: #fbe4d5;
+  --color-surface-container-highest: #f5decf;
+
+  --color-primary: #072316;
+  --color-primary-container: #1e392a;
+  --color-brand-forest-dark: #15291e;
+  --color-brand-forest-alt: #1b3d2f;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #85a38f;
+
+  --color-secondary: #904d00;
+  --color-secondary-container: #fe932c;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #663500;
+  --color-secondary-fixed: #ffdcc3;
+  --color-secondary-fixed-dim: #ffb77d;
+
+  --color-accent-saffron: #f59e0b;
+  --color-accent-ochre: #b45309;
+  --color-accent-terracotta-soft: #f4a261;
   --color-amber-gold: #d97706;
   --color-terracotta: #c87545;
+
+  --color-on-surface: #251910;
+  --color-on-surface-variant: #424843;
+  --color-text-umber: #55483a;
+  --color-text-muted: #6b6357;
+  --color-text-subtle: #8c7e6d;
   --color-charcoal: #271b12;
-  --color-muted: #6b6357;
+  --color-outline: #727973;
+  --color-outline-variant: #c2c8c1;
+
+  --color-status-natural: #065f46;
+  --color-status-natural-bg: #ecfdf5;
+  --color-status-alert: #ea580c;
+  --color-status-alert-bg: #fff9f0;
+  --color-status-alert-border: #fde68a;
+  --color-status-error: #b91c1c;
+  --color-status-error-bg: #fef2f2;
+  --color-status-error-border: #fecaca;
+
   --font-serif: "Playfair Display", Georgia, serif;
   --font-regal: "Cinzel", "Playfair Display", serif;
-  --font-sans: "Plus Jakarta Sans", "DM Sans", sans-serif;
+  --font-sans: "Plus Jakarta Sans", "DM Sans", -apple-system, sans-serif;
+  --font-display: "Playfair Display", Georgia, serif;
 }
 
 :root {
@@ -299,6 +342,47 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 @keyframes pulseAura {
   0% { transform: translate(-50%, -50%) scale(0.95); opacity: 0.7; }
   100% { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+}
+
+.sacred-mandala-wrap {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.08;
+  pointer-events: none;
+  overflow: hidden;
+}
+.sacred-mandala {
+  width: min(850px, 90vw);
+  height: min(850px, 90vw);
+  color: #f59e0b;
+  animation: spinMandala 160s linear infinite;
+}
+@keyframes spinMandala {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.hero-search-wrapper {
+  position: relative;
+  width: min(660px, 100%);
+  margin-bottom: 24px;
+}
+.hero-search-glow {
+  position: absolute;
+  inset: -4px;
+  border-radius: 9999px;
+  background: linear-gradient(to right, rgba(245, 158, 11, 0.28), rgba(254, 147, 44, 0.2), rgba(244, 162, 97, 0.25));
+  filter: blur(14px);
+  opacity: 0.7;
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+}
+.hero-search-wrapper:hover .hero-search-glow,
+.hero-cinematic--focused .hero-search-glow {
+  opacity: 1;
 }
 
 /* Foreground Centered Content */
@@ -840,17 +924,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .sample-stamp {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: #928471;
-}
-.sample-stamp > span:first-child {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--amber-gold, #d97706);
+  flex-shrink: 0;
 }
 
 /* Right Quote Callout */

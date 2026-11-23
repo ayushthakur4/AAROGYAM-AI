@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { AlertTriangle, ArrowRight, BookOpen, Check, Clock3, ExternalLink, Leaf, Play, RefreshCw, Sparkles, X, ShieldAlert } from 'lucide-react'
+import { AlertTriangle, ArrowRight, BookOpen, Check, Clock3, ExternalLink, Leaf, Play, Printer, RefreshCw, Sparkles, X, ShieldAlert } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { getLocalRemedyFallback, getLocalYogaFallback, getRemedyImage, getYogaImage } from '../utils/imageMapper.js'
 
@@ -54,7 +54,7 @@ function DetailModal({ item, kind, query, onClose }) {
         </button>
 
         {/* Modal Banner */}
-        <div className="recipe-modal-banner">
+        <div className="recipe-modal-banner relative">
           <img
             src={imageSrc}
             alt={item.title}
@@ -170,18 +170,29 @@ function DetailModal({ item, kind, query, onClose }) {
 
         {/* Modal Footer Actions */}
         <div className="recipe-modal-footer">
-          <a
-            href={youtubeUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="modal-yt-btn"
+          <button
+            type="button"
+            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-[#d97706]/20 bg-[#fbf6ee] text-[#55483a] text-[13px] font-semibold hover:bg-[#f7efe2] transition-colors"
+            onClick={() => window.print()}
           >
-            <YouTubeIcon size={16} />
-            <span>Watch Video Tutorial on YouTube</span>
-          </a>
-          <button type="button" className="modal-close-action-btn" onClick={onClose}>
-            Done
+            <Printer size={15} />
+            <span>Print Guide</span>
           </button>
+
+          <div className="flex items-center gap-2">
+            <a
+              href={youtubeUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="modal-yt-btn"
+            >
+              <YouTubeIcon size={16} />
+              <span>Watch Video Tutorial</span>
+            </a>
+            <button type="button" className="modal-close-action-btn" onClick={onClose}>
+              Done
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -227,13 +238,16 @@ function RemedyCard({ item, index, query = '', isSample = false, sampleVideo = n
             <Clock3 size={11} /> 5 mins
           </span>
           <span className="compact-nature-tag">
-            <Leaf size={11} /> Natural
+            <Leaf size={11} /> 100% Kitchen Fresh
           </span>
         </div>
       </a>
 
       {/* Header Info */}
       <div className="compact-card-header modern-card-header">
+        <div className="text-[10px] font-bold tracking-wider uppercase text-[#b45309] mb-1">
+          Internal Rasayana
+        </div>
         <div className="compact-title-row">
           <h3 className="compact-remedy-title modern-card-title">
             <a href={youtubeUrl} target="_blank" rel="noreferrer" title="Click to watch on YouTube">
@@ -269,7 +283,7 @@ function RemedyCard({ item, index, query = '', isSample = false, sampleVideo = n
           aria-label={`Read full recipe for ${item.title}`}
         >
           <span className="read-more-btn-text">
-            <BookOpen size={14} className="text-amber-600" />
+            <BookOpen size={14} className="text-[#b45309]" />
             <span>Read Full Recipe</span>
           </span>
           <ArrowRight size={13} className="read-more-arrow" />
@@ -346,13 +360,16 @@ function YogaCard({ item, index, query = '', onOpenModal }) {
             <Clock3 size={11} /> {durationLabel}
           </span>
           <span className="compact-nature-tag">
-            🧘 Gentle
+            🧘 Gentle Practice
           </span>
         </div>
       </a>
 
       {/* Yoga Content Header */}
       <div className="compact-yoga-content modern-card-header">
+        <div className="text-[10px] font-bold tracking-wider uppercase text-[#065f46] mb-1">
+          Visuddha Balance
+        </div>
         <div className="compact-title-row">
           <h3 className="compact-yoga-title modern-card-title">
             <a
@@ -377,7 +394,7 @@ function YogaCard({ item, index, query = '', onOpenModal }) {
           <div className="modern-tag-pills">
             <span className="ingredient-preview-chip">🧘 {(item.steps?.length || 2)} Steps</span>
             <span className="ingredient-preview-chip">⏱ {durationLabel}</span>
-            <span className="ingredient-preview-chip">✓ Pain-free</span>
+            <span className="ingredient-preview-chip">✓ Restorative</span>
           </div>
         </div>
 
@@ -389,7 +406,7 @@ function YogaCard({ item, index, query = '', onOpenModal }) {
           aria-label={`Read instructions for ${item.title}`}
         >
           <span className="read-more-btn-text">
-            <BookOpen size={14} className="text-amber-600" />
+            <BookOpen size={14} className="text-[#b45309]" />
             <span>Read Practice Guide</span>
           </span>
           <ArrowRight size={13} className="read-more-arrow" />
@@ -407,7 +424,7 @@ function YogaCard({ item, index, query = '', onOpenModal }) {
       {/* Card Footer with YouTube Button */}
       <div className="compact-card-footer modern-card-footer">
         <div className="compact-video-meta modern-card-footer-meta">
-          <span className="compact-channel-label">Yoga & Breath</span>
+          <span className="compact-channel-label">Yoga &amp; Breath</span>
           <span className="compact-duration-pill">Guided</span>
         </div>
         <a
