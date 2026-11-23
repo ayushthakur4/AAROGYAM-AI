@@ -168,7 +168,11 @@ export function createRequestHandler(options = {}) {
   const generateGuide = options.generateGuide || generateWellnessGuide
   const saveGuide = options.saveGuide || saveGuideForSession
   const isLimited = options.isRateLimited || createRateLimiter()
-  const distDir = options.distDir || path.resolve(__dirname, '../../client/dist')
+  const distDir = options.distDir || (
+    fs.existsSync(path.resolve(__dirname, '../../dist'))
+      ? path.resolve(__dirname, '../../dist')
+      : path.resolve(__dirname, '../../client/dist')
+  )
 
   return async (request, response) => {
     const origin = request.headers.origin
