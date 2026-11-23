@@ -60,6 +60,41 @@ npm run build    # Build client for production
 npm run test:db  # Database RLS and persistence checks
 ```
 
-## Deployment preparation
+## Deployment Guide (Render & Vercel Ready)
 
-Deploy the `client/` Vite build as a static site and the `server/` Node API as a separate service. Configure `VITE_API_URL`, `VITE_SUPABASE_URL`, and `VITE_SUPABASE_PUBLISHABLE_KEY` in the client host. Configure `PORT`, `CLIENT_ORIGINS`, `GEMINI_API`, `GEMINI_MODEL`, `SUPABASE_URL`, and `SUPABASE_PUBLISHABLE_KEY` in the server host.
+AAROGYAM AI is configured for zero-friction deployment to **Render** and **Vercel** with full support for both unified fullstack deployments and split architectures.
+
+### Option 1: Deploy to Render (Fullstack Web Service - Recommended)
+
+Deploy frontend and backend together on a single Render Web Service ($0 free tier):
+
+1. Push your code to a GitHub repository.
+2. In the [Render Dashboard](https://dashboard.render.com), click **New +** > **Blueprint**.
+3. Select your repository. Render will automatically detect the [`render.yaml`](file:///c:/Users/thaku/OneDrive/Desktop/AAROGYAM%20AI/render.yaml) blueprint:
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start`
+4. In the Environment Variables screen, fill in:
+   - `GEMINI_API_KEY`: Your Gemini API key from Google AI Studio.
+   - `SUPABASE_URL` / `SUPABASE_ANON_KEY` (Optional for persistence): Your Supabase project credentials.
+5. Click **Apply**. Your app is live at `https://<your-service>.onrender.com`!
+
+### Option 2: Deploy to Vercel (Frontend SPA + Serverless API)
+
+Deploy both the Vite client and Node.js API functions serverless on Vercel:
+
+1. Push your code to a GitHub repository.
+2. In the [Vercel Dashboard](https://vercel.com/new), import your repository.
+3. Vercel automatically detects [`vercel.json`](file:///c:/Users/thaku/OneDrive/Desktop/AAROGYAM%20AI/vercel.json):
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `client/dist`
+   - **Serverless API**: Handled automatically by [`api/index.js`](file:///c:/Users/thaku/OneDrive/Desktop/AAROGYAM%20AI/api/index.js).
+4. Under **Environment Variables**, add:
+   - `GEMINI_API_KEY`: Your Gemini API key.
+   - (Optional) `SUPABASE_URL` and `SUPABASE_ANON_KEY`.
+5. Click **Deploy**. Your app is live at `https://<your-project>.vercel.app`!
+
+### Option 3: Split Deployment (Vercel Frontend + Render Backend)
+
+- **Backend on Render**: Deploy as a Web Service running `node server/index.js`.
+- **Frontend on Vercel**: In Vercel Project Settings, add `VITE_API_URL=https://<your-render-service>.onrender.com`.
+- **CORS**: The backend server automatically accepts requests from `*.vercel.app` and `*.onrender.com` domains out of the box. Additional domains can be configured via `CLIENT_ORIGINS`.

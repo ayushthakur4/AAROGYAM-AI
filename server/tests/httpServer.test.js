@@ -1,5 +1,8 @@
 import assert from 'node:assert/strict'
 import { once } from 'node:events'
+import fs from 'node:fs'
+import os from 'node:os'
+import path from 'node:path'
 import test from 'node:test'
 import { createServer } from '../src/httpServer.js'
 
@@ -86,4 +89,70 @@ test('returns 404 for unknown endpoints and rejects unapproved preflight origins
     const preflight = await fetch(`${baseUrl}/api/search`, { method: 'OPTIONS', headers: { Origin: 'https://not-allowed.example' } })
     assert.equal(preflight.status, 403)
   })
+})
+
+test('handles health check route', async () => {
+  const server = createServer()
+  await withServer(server, async (baseUrl) => {
+    const res = await fetch(`${baseUrl}/api/health`)
+    assert.equal(res.status, 200)
+    const body = await res.json()
+    assert.equal(body.status, 'ok')
+    assert.equal(body.service, 'aarogyam-ai-api')
+  })
+})
+
+test('allows origins from vercel.app and onrender.com in default configuration', async () => {
+  const server = createServer()
+  await withServer(server, async (baseUrl) => {
+    const vercelPreflight = await fetch(`${baseUrl}/api/search`, {
+      method: 'OPTIONS',
+      headers: { Origin: 'https://aarogyam-ai-preview.vercel.app' },
+    })
+    assert.equal(vercelPreflight.status, 204)
+    assert.equal(vercelPreflight.headers.get('access-control-allow-origin'), 'https://aarogyam-ai-preview.vercel.app')
+
+    const renderPreflight = await fetch(`${baseUrl}/api/search`, {
+      method: 'OPTIONS',
+      headers: { Origin: 'https://aarogyam-ai.onrender.com' },
+    })
+    assert.equal(renderPreflight.status, 204)
+    assert.equal(renderPreflight.headers.get('access-control-allow-origin'), 'https://aarogyam-ai.onrender.com')
+  })
+})
+
+test('serves static files and provides SPA index.html fallback for client routing', async () => {
+  const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'aarogyam-test-dist-'))
+  fs.writeFileSync(path.join(tempDir, 'index.html'), '<!doctype html><html><body><h1>AAROGYAM</h1></body></html>', 'utf8')
+  fs.mkdirSync(path.join(tempDir, 'assets'))
+  fs.writeFileSync(path.join(tempDir, 'assets', 'style.css'), 'body { background: #fff; }', 'utf8')
+
+  const server = createServer({ distDir: tempDir })
+  try {
+    await withServer(server, async (baseUrl) => {
+      // Direct root request
+      const rootRes = await fetch(`${baseUrl}/`)
+      assert.equal(rootRes.status, 200)
+      assert.match(rootRes.headers.get('content-type'), /text\/html/)
+      assert.match(await rootRes.text(), /<h1>AAROGYAM<\/h1>/)
+
+      // SPA client route fallback (/results)
+      const spaRes = await fetch(`${baseUrl}/results`)
+      assert.equal(spaRes.status, 200)
+      assert.match(spaRes.headers.get('content-type'), /text\/html/)
+      assert.match(await spaRes.text(), /<h1>AAROGYAM<\/h1>/)
+
+      // Static asset request (/assets/style.css)
+      const assetRes = await fetch(`${baseUrl}/assets/style.css`)
+      assert.equal(assetRes.status, 200)
+      assert.match(assetRes.headers.get('content-type'), /text\/css/)
+      assert.equal(assetRes.headers.get('cache-control'), 'public, max-age=31536000, immutable')
+
+      // Missing asset with extension returns 404
+      const missingAsset = await fetch(`${baseUrl}/assets/missing.png`)
+      assert.equal(missingAsset.status, 404)
+    })
+  } finally {
+    fs.rmSync(tempDir, { recursive: true, force: true })
+  }
 })

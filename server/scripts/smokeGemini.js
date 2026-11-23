@@ -1,4 +1,17 @@
+import fs from 'node:fs'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { generateWellnessGuide } from '../src/gemini.js'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const envPaths = [path.resolve(__dirname, '../.env'), path.resolve(__dirname, '../../.env')]
+for (const envPath of envPaths) {
+  if (fs.existsSync(envPath)) {
+    try {
+      process.loadEnvFile(envPath)
+    } catch {}
+  }
+}
 
 try {
   const guide = await generateWellnessGuide('For an adult with mild cold symptoms, what gentle comfort ideas may help? Avoid diagnosis and medication advice.')

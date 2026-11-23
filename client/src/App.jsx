@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import HeroSection from './components/HeroSection.jsx'
 import SiteHeader from './components/SiteHeader.jsx'
 import SiteFooter from './components/SiteFooter.jsx'
+import { getApiBaseUrl } from './utils/api.js'
 
 const howItWorksSteps = [
   {
@@ -65,7 +66,7 @@ export default function App() {
     setIsSearching(true)
     setSearchError('')
     try {
-      const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '')
+      const apiUrl = getApiBaseUrl()
       const response = await fetch(`${apiUrl}/api/search`, {
         method: 'POST',
         headers: {

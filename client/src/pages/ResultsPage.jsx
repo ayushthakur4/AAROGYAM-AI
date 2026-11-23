@@ -5,6 +5,7 @@ import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import RecommendationList from '../components/RecommendationList.jsx'
 import { mockWellnessGuide } from '../data/mockWellnessGuide.js'
+import { getApiBaseUrl } from '../utils/api.js'
 import warriorArtwork from '../assets/yoga-warrior.svg'
 import seatedArtwork from '../assets/yoga-seated.svg'
 import stretchArtwork from '../assets/yoga-stretch.svg'
@@ -63,7 +64,7 @@ export default function ResultsPage() {
     setIsSearchingNew(true)
     setSearchError('')
     try {
-      const apiUrl = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '')
+      const apiUrl = getApiBaseUrl()
       const response = await fetch(`${apiUrl}/api/search`, {
         method: 'POST',
         headers: {
