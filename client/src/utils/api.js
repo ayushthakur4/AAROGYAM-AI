@@ -6,6 +6,6 @@ export function getApiBaseUrl() {
   if (import.meta.env.DEV || import.meta.env.MODE === 'test') {
     return 'http://localhost:3000'
   }
-  // In production (e.g. Render fullstack or Vercel serverless), use relative URL on same host
-  return ''
+  // In production, connect to the live Render backend
+  return 'https://aarogyam-ai-ktrn.onrender.com'
 }
