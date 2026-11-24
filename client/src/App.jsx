@@ -5,6 +5,7 @@ import HeroSection from './components/HeroSection.jsx'
 import SiteHeader from './components/SiteHeader.jsx'
 import SiteFooter from './components/SiteFooter.jsx'
 import { getApiBaseUrl } from './utils/api.js'
+import { useAuth } from './context/AuthContext.jsx'
 
 const howItWorksSteps = [
   {
@@ -84,19 +85,23 @@ const categories = [
 
 export default function App() {
   const navigate = useNavigate()
+  const { saveSearchQuery, sessionToken } = useAuth()
   const [isSearching, setIsSearching] = useState(false)
   const [searchError, setSearchError] = useState('')
 
   async function searchWellness(query) {
     setIsSearching(true)
     setSearchError('')
+    saveSearchQuery(query)
     try {
       const apiUrl = getApiBaseUrl()
+      const headers = { 'Content-Type': 'application/json' }
+      if (sessionToken) {
+        headers.Authorization = `Bearer ${sessionToken}`
+      }
       const response = await fetch(`${apiUrl}/api/search`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({ query }),
         signal: AbortSignal.timeout(75_000),
       })

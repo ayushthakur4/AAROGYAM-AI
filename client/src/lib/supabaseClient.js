@@ -1,10 +1,16 @@
 import { createClient } from '@supabase/supabase-js'
 
-const projectUrl = import.meta.env.VITE_SUPABASE_URL?.trim()
-const publishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim()
+const projectUrl = (import.meta.env.VITE_SUPABASE_URL || '').trim()
+const publishableKey = (import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || '').trim()
 
-export const isSupabaseConfigured = Boolean(projectUrl && publishableKey)
+export const isSupabaseConfigured = Boolean(projectUrl && publishableKey) && import.meta.env.MODE !== 'test'
 
 export const supabase = isSupabaseConfigured
-  ? createClient(projectUrl, publishableKey)
+  ? createClient(projectUrl, publishableKey, {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+      },
+    })
   : null

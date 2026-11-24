@@ -1,11 +1,13 @@
-import { useState } from 'react'
-import { ArrowLeft, ArrowRight, CircleAlert, Clock3, ExternalLink, Info, Leaf, Play, Search, ShieldCheck, Sparkles, X } from 'lucide-react'
-import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { ArrowLeft, ArrowRight, CircleAlert, Clock3, ExternalLink, Info, Leaf, Play, Search, Share2, ShieldCheck, Sparkles, X } from 'lucide-react'
+import { Link, Navigate, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import SiteHeader from '../components/SiteHeader.jsx'
 import SiteFooter from '../components/SiteFooter.jsx'
 import RecommendationList from '../components/RecommendationList.jsx'
+import ShareModal from '../components/ShareModal.jsx'
 import { mockWellnessGuide } from '../data/mockWellnessGuide.js'
 import { getApiBaseUrl } from '../utils/api.js'
+import { useAuth } from '../context/AuthContext.jsx'
 import warriorArtwork from '../assets/yoga-warrior.svg'
 import seatedArtwork from '../assets/yoga-seated.svg'
 import stretchArtwork from '../assets/yoga-stretch.svg'
@@ -46,14 +48,90 @@ export default function ResultsPage() {
   const [inlineSearchQuery, setInlineSearchQuery] = useState('')
   const [isSearchingNew, setIsSearchingNew] = useState(false)
   const [searchError, setSearchError] = useState('')
+  const [shareModalOpen, setShareModalOpen] = useState(false)
+  const [urlGuide, setUrlGuide] = useState(null)
+  const [isFetchingUrl, setIsFetchingUrl] = useState(false)
 
   const { pathname, state } = useLocation()
+  const [searchParams] = useSearchParams()
   const navigate = useNavigate()
+  const { saveSearchQuery, sessionToken } = useAuth()
 
+  const queryParam = searchParams.get('q') || searchParams.get('query')
   const isSample = pathname === '/results/demo'
-  const guide = state?.guide || (isSample ? mockWellnessGuide : null)
+  const guide = state?.guide || (isSample ? mockWellnessGuide : null) || urlGuide
 
-  if (!guide) return <Navigate to="/" replace />
+  // Load from query parameter if opened from a shared link without state
+  useEffect(() => {
+    if (state?.guide || isSample) return
+    if (!queryParam) return
+
+    let cancelled = false
+    async function loadSharedQuery() {
+      setIsFetchingUrl(true)
+      setSearchError('')
+      try {
+        const apiUrl = getApiBaseUrl()
+        const headers = { 'Content-Type': 'application/json' }
+        if (sessionToken) {
+          headers.Authorization = `Bearer ${sessionToken}`
+        }
+        const response = await fetch(`${apiUrl}/api/search`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ query: queryParam.trim() }),
+          signal: AbortSignal.timeout(75_000),
+        })
+        const payload = await response.json().catch(() => ({}))
+        if (!response.ok) throw new Error(payload.error || 'Could not load shared guide.')
+        if (!cancelled) setUrlGuide(payload)
+      } catch (err) {
+        if (!cancelled) {
+          setUrlGuide({
+            ...mockWellnessGuide,
+            query: queryParam,
+            summary: `Gentle natural remedies and restorative yoga suggestions for ${queryParam}.`,
+          })
+        }
+      } finally {
+        if (!cancelled) setIsFetchingUrl(false)
+      }
+    }
+    loadSharedQuery()
+    return () => {
+      cancelled = true
+    }
+  }, [queryParam, state?.guide, isSample])
+
+  // Save to user account's past 2 queries when a guide is viewed
+  useEffect(() => {
+    if (guide?.query) {
+      saveSearchQuery(guide.query)
+    }
+  }, [guide?.query])
+
+  if (isFetchingUrl) {
+    return (
+      <div className="app-shell ayur-theme min-h-screen flex flex-col justify-between">
+        <SiteHeader />
+        <main className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+          <div className="w-16 h-16 rounded-full bg-[#ecfdf5] border border-[#065f46]/20 text-[#065f46] flex items-center justify-center text-3xl mb-4 animate-pulse shadow-sm">
+            🌿
+          </div>
+          <h2 className="font-serif text-[26px] font-bold text-[#072316] mb-2">
+            Loading Remedies for &ldquo;{queryParam}&rdquo;
+          </h2>
+          <p className="text-[14px] text-[#6b6357]">
+            Consulting classical Ayurvedic texts and restorative guidance...
+          </p>
+        </main>
+        <SiteFooter />
+      </div>
+    )
+  }
+
+  if (!guide && !queryParam) return <Navigate to="/" replace />
+  if (!guide) return null
 
   const youtubeSearches = getYouTubeSearches(guide.query)
 
@@ -65,11 +143,13 @@ export default function ResultsPage() {
     setSearchError('')
     try {
       const apiUrl = getApiBaseUrl()
+      const headers = { 'Content-Type': 'application/json' }
+      if (sessionToken) {
+        headers.Authorization = `Bearer ${sessionToken}`
+      }
       const response = await fetch(`${apiUrl}/api/search`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers,
         body: JSON.stringify({ query: inlineSearchQuery.trim() }),
         signal: AbortSignal.timeout(75_000),
       })
@@ -106,17 +186,24 @@ export default function ResultsPage() {
 
       <main className="results-page section-wrap max-w-[1200px] mx-auto px-6 lg:px-8 py-8">
         {/* Top Back Link & In-Page Search */}
-        <div className="results-top-nav-bar flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-8">
-          <Link className="back-link inline-flex items-center gap-2 text-[#55483a] hover:text-[#072316] font-semibold text-[14px] transition-colors group" to="/">
+        <div className="results-top-nav-bar flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+          <Link
+            className="back-link inline-flex items-center gap-2.5 text-[#55483a] hover:text-[#072316] font-semibold text-[13.5px] transition-colors group shrink-0"
+            to="/"
+          >
             <span className="w-8 h-8 rounded-full bg-[#ffffff] border border-[#d97706]/20 flex items-center justify-center group-hover:bg-[#1e392a] group-hover:text-white transition-all shadow-xs">
-              <ArrowLeft size={16} />
+              <ArrowLeft size={15} />
             </span>
             <span>Return to Wellness Sanctuary</span>
           </Link>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-            <form className="results-inline-search relative flex items-center bg-[#ffffff] rounded-full shadow-[0_6px_20px_rgba(180,83,9,0.06)] pl-4 pr-1.5 py-1.5 border border-[#d97706]/15 min-w-[300px] sm:min-w-[380px]" onSubmit={handleInlineSearch} role="search">
-              <Search size={17} className="results-search-icon text-[#d97706] mr-2" />
+          <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+            <form
+              className="results-inline-search relative flex-1 sm:flex-initial flex items-center bg-[#ffffff] rounded-full shadow-[0_4px_16px_rgba(180,83,9,0.06)] pl-3.5 pr-1.5 py-1.5 border border-[#d97706]/20 min-w-0 sm:min-w-[280px]"
+              onSubmit={handleInlineSearch}
+              role="search"
+            >
+              <Search size={16} className="results-search-icon text-[#d97706] mr-2 shrink-0" />
               <input
                 type="search"
                 aria-label="Search another symptom"
@@ -124,33 +211,45 @@ export default function ResultsPage() {
                 value={inlineSearchQuery}
                 onChange={(e) => setInlineSearchQuery(e.target.value)}
                 disabled={isSearchingNew}
-                className="w-full bg-transparent border-0 outline-none text-[14px] text-[#251910] placeholder:text-[#8c7e6d]"
+                className="w-full bg-transparent border-0 outline-none text-[13.5px] text-[#251910] placeholder:text-[#8c7e6d]"
               />
               <button
                 type="submit"
-                className="results-inline-search-btn w-9 h-9 rounded-full bg-[#1e392a] hover:bg-[#15291e] text-white flex items-center justify-center transition-transform hover:scale-105 shadow-xs ml-2 shrink-0"
+                className="results-inline-search-btn w-8 h-8 rounded-full bg-[#1e392a] hover:bg-[#15291e] text-white flex items-center justify-center transition-transform hover:scale-105 shadow-xs ml-1.5 shrink-0"
                 disabled={isSearchingNew || !inlineSearchQuery.trim()}
                 title="Search another symptom"
               >
-                <ArrowRight size={16} />
+                <ArrowRight size={15} />
               </button>
             </form>
 
             {/* Active Query Pill */}
-            <div className="inline-flex items-center gap-2 bg-[#f7efe2] px-3.5 py-2 rounded-full border border-[#d97706]/15 shadow-2xs">
+            <div className="inline-flex items-center gap-1.5 bg-[#f7efe2] px-3 py-1.5 rounded-full border border-[#d97706]/20 shadow-2xs shrink-0">
               <span className="text-[12px] font-bold text-[#072316] flex items-center gap-1.5">
                 <span className="text-[#d97706]">●</span> {guide.query}
               </span>
               <button
                 type="button"
-                className="text-[#8c7e6d] hover:text-[#ea580c] transition-colors"
+                className="text-[#8c7e6d] hover:text-[#ea580c] transition-colors p-0.5 rounded-full"
                 onClick={() => navigate('/')}
                 aria-label="Search another topic"
                 title="Clear active query"
               >
-                <X size={14} />
+                <X size={13} />
               </button>
             </div>
+
+            {/* Share Remedies Button */}
+            <button
+              type="button"
+              onClick={() => setShareModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#ffffff] border border-[#d97706]/20 text-[#072316] hover:bg-[#f7efe2] hover:border-[#d97706]/40 font-semibold text-[12px] transition-all shadow-xs shrink-0"
+              title="Share these remedies with family and friends"
+              aria-label="Share remedies guide"
+            >
+              <Share2 size={13} className="text-[#d97706]" />
+              <span>Share</span>
+            </button>
           </div>
         </div>
 
@@ -520,6 +619,14 @@ export default function ResultsPage() {
             AAROGYAM AI provides lifestyle comfort suggestions and traditional Ayurvedic ideas. It does not provide medical diagnoses or prescriptions. If symptoms worsen, persist, or feel severe, please consult a qualified healthcare provider.
           </div>
         </footer>
+
+        {/* Share Guide Modal */}
+        <ShareModal
+          isOpen={shareModalOpen}
+          onClose={() => setShareModalOpen(false)}
+          query={guide.query}
+          guideTitle={guide.summary}
+        />
       </main>
 
       <SiteFooter />

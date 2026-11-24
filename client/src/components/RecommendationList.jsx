@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { AlertTriangle, ArrowRight, BookOpen, Check, Clock3, ExternalLink, Leaf, Play, Printer, RefreshCw, Sparkles, X, ShieldAlert } from 'lucide-react'
+import { AlertTriangle, ArrowRight, BookOpen, Check, Clock3, ExternalLink, Leaf, Play, Printer, RefreshCw, Share2, Sparkles, X, ShieldAlert } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { getLocalRemedyFallback, getLocalYogaFallback, getRemedyImage, getYogaImage } from '../utils/imageMapper.js'
 
@@ -28,6 +28,8 @@ function LoadingCards({ label }) {
 }
 
 function DetailModal({ item, kind, query, onClose }) {
+  const [copiedShare, setCopiedShare] = useState(false)
+
   useEffect(() => {
     function handleKeyDown(e) {
       if (e.key === 'Escape') onClose()
@@ -45,6 +47,27 @@ function DetailModal({ item, kind, query, onClose }) {
   const videoSearchTerm = `${item.title} ${query} ${isRemedy ? 'natural remedy' : 'yoga pose tutorial'}`
   const youtubeUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(videoSearchTerm)}`
   const durationLabel = item.duration || `${item.durationMinutes || 5} mins`
+
+  async function handleShareItem() {
+    const shareUrl = `${window.location.origin}/results?q=${encodeURIComponent(query)}`
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${item.title} — Ayurvedic Remedy for ${query}`,
+          text: `Check out this natural remedy "${item.title}" for ${query} on AAROGYAM AI.`,
+          url: shareUrl,
+        })
+        return
+      } catch (err) {
+        if (err.name === 'AbortError') return
+      }
+    }
+    try {
+      await navigator.clipboard.writeText(shareUrl)
+      setCopiedShare(true)
+      setTimeout(() => setCopiedShare(false), 2000)
+    } catch {}
+  }
 
   return (
     <div className="recipe-modal-backdrop" onClick={onClose} role="dialog" aria-modal="true" aria-labelledby="modal-item-title">
@@ -170,14 +193,34 @@ function DetailModal({ item, kind, query, onClose }) {
 
         {/* Modal Footer Actions */}
         <div className="recipe-modal-footer">
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-[#d97706]/20 bg-[#fbf6ee] text-[#55483a] text-[13px] font-semibold hover:bg-[#f7efe2] transition-colors"
-            onClick={() => window.print()}
-          >
-            <Printer size={15} />
-            <span>Print Guide</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-[#d97706]/20 bg-[#fbf6ee] text-[#55483a] text-[13px] font-semibold hover:bg-[#f7efe2] transition-colors"
+              onClick={() => window.print()}
+            >
+              <Printer size={15} />
+              <span>Print</span>
+            </button>
+            <button
+              type="button"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl border border-[#d97706]/20 bg-[#fbf6ee] text-[#072316] text-[13px] font-semibold hover:bg-[#f7efe2] transition-colors"
+              onClick={handleShareItem}
+              title="Share this remedy with others"
+            >
+              {copiedShare ? (
+                <>
+                  <Check size={14} className="text-[#065f46]" />
+                  <span>Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Share2 size={14} className="text-[#d97706]" />
+                  <span>Share</span>
+                </>
+              )}
+            </button>
+          </div>
 
           <div className="flex items-center gap-2">
             <a

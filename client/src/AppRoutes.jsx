@@ -5,6 +5,8 @@ import App from './App.jsx'
 import ResultsPage from './pages/ResultsPage.jsx'
 import SiteHeader from './components/SiteHeader.jsx'
 import SiteFooter from './components/SiteFooter.jsx'
+import { AuthProvider } from './context/AuthContext.jsx'
+import AuthModal from './components/AuthModal.jsx'
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -161,14 +163,15 @@ function NotFoundPage() {
 
 export default function AppRoutes() {
   return (
-    <>
+    <AuthProvider>
       <ScrollToTop />
+      <AuthModal />
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/results/demo" element={<ResultsPage />} />
         <Route path="/results" element={<ResultsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </>
+    </AuthProvider>
   )
 }

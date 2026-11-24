@@ -1558,6 +1558,14 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   position: relative;
   animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 @keyframes modalFadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -2131,13 +2139,17 @@ button:focus-visible, a:focus-visible, input:focus-visible {
     top: 80px;
     left: 0;
     right: 0;
-    background: #fbf6ee;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+    background: rgba(251, 246, 238, 0.98);
+    backdrop-filter: blur(16px);
     border-bottom: 1px solid rgba(217, 119, 6, 0.16);
-    padding: 24px;
+    padding: 24px 20px;
     flex-direction: column;
-    gap: 16px;
+    gap: 14px;
     display: none;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12);
+    z-index: 49;
   }
   .aarogyam-nav--open {
     display: flex;
@@ -2149,6 +2161,21 @@ button:focus-visible, a:focus-visible, input:focus-visible {
     flex-direction: column;
     align-items: flex-start;
     gap: 14px;
+  }
+  .recipe-modal-footer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  .recipe-modal-footer > div {
+    width: 100%;
+    justify-content: center;
+  }
+  .recipe-modal-footer .modal-yt-btn,
+  .recipe-modal-footer .modal-close-action-btn {
+    flex: 1;
+    justify-content: center;
+    text-align: center;
   }
 }
 

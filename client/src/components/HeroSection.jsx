@@ -1,7 +1,8 @@
 import { useState, useRef } from 'react'
-import { ArrowRight, Search, Sparkles } from 'lucide-react'
+import { ArrowRight, Clock, Search, Sparkles, X } from 'lucide-react'
 import heroBannerImg from '../assets/hero-banner.jpg'
 import yogiSvg from '../assets/yogi-meditation.svg'
+import { useAuth } from '../context/AuthContext.jsx'
 
 const topicList = [
   { label: 'Headache', icon: '🧠' },
@@ -16,6 +17,7 @@ export default function HeroSection({ onSearch, isSearching = false, searchError
   const [query, setQuery] = useState('')
   const [searchFocused, setSearchFocused] = useState(false)
   const heroRef = useRef(null)
+  const { isLoggedIn, recentQueries } = useAuth()
 
   async function submitSearch(event) {
     event.preventDefault()
@@ -119,6 +121,21 @@ export default function HeroSection({ onSearch, isSearching = false, searchError
                 onFocus={() => setSearchFocused(true)}
                 onBlur={() => setSearchFocused(false)}
               />
+              {query && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    setQuery('')
+                    document.getElementById('wellness-search')?.focus()
+                  }}
+                  className="p-1.5 rounded-full text-[#8c7e6d] hover:text-[#072316] hover:bg-black/5 transition-colors mr-1"
+                  aria-label="Clear search input"
+                  title="Clear"
+                >
+                  <X size={15} />
+                </button>
+              )}
               <button
                 type="submit"
                 className="search-circle-submit"
@@ -141,6 +158,28 @@ export default function HeroSection({ onSearch, isSearching = false, searchError
             <p className="hero-search-error hero-search-error--center" role="alert">
               {searchError}
             </p>
+          )}
+
+          {/* Saved Past 2 Queries on Account */}
+          {isLoggedIn && recentQueries?.length > 0 && (
+            <div className="saved-queries-account-row inline-flex flex-wrap items-center justify-center gap-2 mb-4 px-4 py-1.5 rounded-full bg-[#ffffff]/90 backdrop-blur-md border border-[#d97706]/20 shadow-[0_4px_16px_rgba(217,119,6,0.06)] animate-fadeIn">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-[#b45309] flex items-center gap-1.5">
+                <Clock size={12} className="text-[#d97706]" />
+                <span>Saved Inquiries:</span>
+              </span>
+              {recentQueries.map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  onClick={() => chooseTopic(item)}
+                  className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#ecfdf5] border border-[#065f46]/20 hover:border-[#065f46]/40 text-[#065f46] text-[12px] font-semibold transition-all shadow-2xs hover:scale-105"
+                  title={`Re-explore ${item}`}
+                >
+                  <span>{item}</span>
+                  <ArrowRight size={10} className="text-[#065f46]/70" />
+                </button>
+              ))}
+            </div>
           )}
 
           {/* Try Searching For Topic Chips */}
